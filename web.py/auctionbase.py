@@ -53,9 +53,19 @@ def render_template(template_name, **context):
 urls = ('/currtime', 'curr_time',
         '/selecttime', 'select_time',
         '/add_bid', 'add_bid',
+        '/search', 'search',
+        '/timetable','timetable'
         # TODO: add additional URLs here
         # first parameter => URL, second parameter => class name
         )
+class search:
+    def GET(self):
+        return render_template('search.html')
+
+
+
+
+
 class add_bid:
     # A simple GET request, to '/currtime'
     #
@@ -69,18 +79,29 @@ class add_bid:
         itemID = post_params['itemID']
         price = post_params['price']
         userID = post_params['userID']
-        current_time = sqlitedb.getTime()
-        update_message = 'Bid set on item:%s at $%s' \
-                         ' at %s' % ((itemID), (price), (current_time))
+        t = sqlitedb.transaction()
+        # try:
+        #     sqlitedb.query('[FIRST QUERY STATEMENT]')
+        #     sqlitedb.query('[SECOND QUERY STATEMENT]')
+        # except Exception as e:
+        #     t.rollback()
+        #     print str(e)
+        # else:
+        #     t.commit()
         try:
-            sqlitedb.insertBid(itemID,userID,price,current_time)
+            current_time = sqlitedb.getTime()
+            update_message = 'Bid set on item:%s at $%s' \
+                         ' at %s' % ((itemID), (price), (current_time))
+            sqlitedb.insertBid(itemID, userID, price, current_time)
         except Exception as e:
+            t.rollback()
             print str(e)
-            update_message = 'Invalid bid, please enter a new bid'
+            update_message = 'Invalid bid, please enter a new valid bid'
+        else:
+            t.commit()
         # Here, we assign `update_message' to `message', which means
         # we'll refer to it in our template as `message'
         return render_template('add_bid.html', message=update_message)
-
 
 
 class curr_time:
@@ -112,19 +133,16 @@ class select_time:
         mm = post_params['mm']
         ss = post_params['ss'];
         enter_name = post_params['entername']
-
-
         selected_time = '%s-%s-%s %s:%s:%s' % (yyyy, MM, dd, HH, mm, ss)
         update_message = '(Hello, %s. Previously selected time was: %s.)' % (enter_name, selected_time)
-        # TODO: save the selected time as the current time in the database
         try:
-            sqlitedb.updateCurTime(selected_time, sqlitedb.getTime())
+            sqlitedb.update_curTime(selected_time, sqlitedb.getTime())
         except Exception as e:
             update_message = 'Error occured, please select a new time'
-
+            print str(e)
         # Here, we assign `update_message' to `message', which means
         # we'll refer to it in our template as `message'
-        return render_template('select_time.html', message = update_message)
+        return render_template('select_time.html', message=update_message)
 
 ###########################################################################################
 ##########################DO NOT CHANGE ANYTHING BELOW THIS LINE!##########################
