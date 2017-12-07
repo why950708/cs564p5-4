@@ -86,7 +86,11 @@ class add_bid:
             current_time = sqlitedb.getTime()
             update_message = 'Bid set on item:%s at $%s' \
                          ' at %s' % ((itemID), (price), (current_time))
-            sqlitedb.insertBid(itemID, userID, price, current_time)
+            try:
+                sqlitedb.insertBid(itemID, userID, price, current_time)
+            except Exception as e:
+                print str(e)
+                raise
         except Exception as e:
             t.rollback()
             print str(e)
