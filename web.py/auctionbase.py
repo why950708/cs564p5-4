@@ -90,8 +90,10 @@ class select_time:
         selected_time = '%s-%s-%s %s:%s:%s' % (yyyy, MM, dd, HH, mm, ss)
         update_message = '(Hello, %s. Previously selected time was: %s.)' % (enter_name, selected_time)
         # TODO: save the selected time as the current time in the database
-        sqlitedb.updateCurTime(selected_time, sqlitedb.getTime())
-
+        try:
+            sqlitedb.updateCurTime(selected_time, sqlitedb.getTime())
+        except Exception as e:
+            update_message = str(e)
 
         # Here, we assign `update_message' to `message', which means
         # we'll refer to it in our template as `message'

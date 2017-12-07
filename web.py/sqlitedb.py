@@ -58,5 +58,14 @@ def query(query_string, vars = {}):
 #TODO: additional methods to interact with your database,
 # e.g. to update the current time
 def updateCurTime(curTime, prevTime):
-   db.update('CurrentTime', where='Time= $Time',vars={'Time':prevTime}, Time=curTime)
+    query_string = 'update currentTime Set Time = $curTime where Time = $Time'
+    query(query_string, {'Time':prevTime, 'curTime':curTime})
+    # else:
+    #         t.commit()
+        # //
+    # //except Exception as e:
+    #         print str(e)
+
+    # results = query(query_string, {'Time':prevTime, 'curTime':curTime})
+
 
