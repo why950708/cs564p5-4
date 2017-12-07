@@ -86,18 +86,11 @@ class add_bid:
             current_time = sqlitedb.getTime()
             update_message = 'Bid set on item:%s at $%s' \
                          ' at %s' % ((itemID), (price), (current_time))
-            try:
-                sqlitedb.insertBid(itemID, userID, price, current_time)
-            except Exception as e:
-                print str(e)
-                raise
+            sqlitedb.insertBid(itemID, userID, price, current_time)
         except Exception as e:
-            t.rollback()
             print str(e)
             update_message = 'Invalid bid, please enter a new valid bid'
-        else:
-            pass
-            #t.commit()
+
         # Here, we assign `update_message' to `message', which means
         # we'll refer to it in our template as `message'
         return render_template('add_bid.html', message=update_message)
