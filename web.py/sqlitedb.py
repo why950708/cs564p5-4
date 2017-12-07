@@ -32,10 +32,11 @@ def transaction():
 def getTime():
     # TODO: update the query string to match
     # the correct column and table name in your database
-    query_string = 'select currenttime from Time'
+    query_string = 'select time from CurrentTime'
     results = query(query_string)
     # alternatively: return results[0]['currenttime']
-    return results[0].currenttime # TODO: update this as well to match the
+    return results[0].Time
+    #return results[0].currenttime # TODO: update this as well to match the
                                   # column name
 
 # returns a single item specified by the Item's ID in the database
@@ -56,3 +57,6 @@ def query(query_string, vars = {}):
 
 #TODO: additional methods to interact with your database,
 # e.g. to update the current time
+def updateCurTime(curTime, prevTime):
+   db.update('CurrentTime', where="Time="+prevTime, Time=curTime)         
+
