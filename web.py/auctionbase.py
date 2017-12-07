@@ -96,7 +96,8 @@ class add_bid:
             print str(e)
             update_message = 'Invalid bid, please enter a new valid bid'
         else:
-            t.commit()
+            pass
+            #t.commit()
         # Here, we assign `update_message' to `message', which means
         # we'll refer to it in our template as `message'
         return render_template('add_bid.html', message=update_message)
