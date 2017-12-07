@@ -56,6 +56,7 @@ urls = ('/currtime', 'curr_time',
         # first parameter => URL, second parameter => class name
         )
 
+
 class curr_time:
     # A simple GET request, to '/currtime'
     #

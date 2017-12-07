@@ -58,5 +58,5 @@ def query(query_string, vars = {}):
 #TODO: additional methods to interact with your database,
 # e.g. to update the current time
 def updateCurTime(curTime, prevTime):
-   db.update('CurrentTime', where="Time="+prevTime, Time=curTime)         
+   db.update('CurrentTime', where='Time= $Time',vars={'Time':prevTime}, Time=curTime)
 
