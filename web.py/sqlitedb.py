@@ -69,3 +69,7 @@ def updateCurTime(curTime, prevTime):
     # results = query(query_string, {'Time':prevTime, 'curTime':curTime})
 
 
+def insertBid(item_id,user_id,price, cur_Time):
+    cur_Time = '200'
+    query_string = 'insert into BIDS values ($item_id, $user_id, $price, $cur_time)'
+    query(query_string, {'item_id':item_id,'user_id':user_id, 'price':price, 'cur_time':cur_Time})

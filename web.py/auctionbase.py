@@ -52,9 +52,35 @@ def render_template(template_name, **context):
 
 urls = ('/currtime', 'curr_time',
         '/selecttime', 'select_time',
+        '/add_bid', 'add_bid',
         # TODO: add additional URLs here
         # first parameter => URL, second parameter => class name
         )
+class add_bid:
+    # A simple GET request, to '/currtime'
+    #
+    # Notice that we pass in `current_time' to our `render_template' call
+    # in order to have its value displayed on the web page
+    def GET(self):
+        return render_template('add_bid.html')
+    def POST(self):
+        print web.input()
+        post_params = web.input()
+        itemID = post_params['itemID']
+        price = post_params['price']
+        userID = post_params['userID']
+        current_time = sqlitedb.getTime()
+        update_message = 'Bid set on item:%s at $%s' \
+                         ' at %s' % ((itemID), (price), (current_time))
+        try:
+            sqlitedb.insertBid(itemID,userID,price,current_time)
+        except Exception as e:
+            print str(e)
+            update_message = 'Invalid bid, please enter a new bid'
+        # Here, we assign `update_message' to `message', which means
+        # we'll refer to it in our template as `message'
+        return render_template('add_bid.html', message=update_message)
+
 
 
 class curr_time:
@@ -78,6 +104,7 @@ class select_time:
     # and GET requests
     def POST(self):
         post_params = web.input()
+        print web.input()
         MM = post_params['MM']
         dd = post_params['dd']
         yyyy = post_params['yyyy']
@@ -93,7 +120,7 @@ class select_time:
         try:
             sqlitedb.updateCurTime(selected_time, sqlitedb.getTime())
         except Exception as e:
-            update_message = str(e)
+            update_message = 'Error occured, please select a new time'
 
         # Here, we assign `update_message' to `message', which means
         # we'll refer to it in our template as `message'
