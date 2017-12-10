@@ -82,3 +82,13 @@ def update_curTime(curTime, prevTime):
 def insertBid(item_id, user_id, price, cur_time):
     query_string = 'insert into BIDS values ($item_id, $user_id, $price, $cur_time)'
     query(query_string, {'item_id': item_id, 'user_id': user_id, 'price': price, 'cur_time': cur_time})
+
+def checkItemID(item_id):
+    query_string = 'SELECT * FROM items WHERE itemid = $item_id'
+    results = queryWithResult(query_string, {'item_id': item_id})
+    return len(results) == 1
+
+def checkUserID(user_id):
+    query_string = 'SELECT * FROM users where userid = $user_id'
+    results = queryWithResult(query_string, {'user_id': user_id})
+    return len(results) == 1

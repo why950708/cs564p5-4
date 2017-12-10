@@ -73,27 +73,34 @@ class add_bid:
         itemID = post_params['itemID']
         price = post_params['price']
         userID = post_params['userID']
-        t = sqlitedb.transaction()
-        # try:
-        #     sqlitedb.query('[FIRST QUERY STATEMENT]')
-        #     sqlitedb.query('[SECOND QUERY STATEMENT]')
-        # except Exception as e:
-        #     t.rollback()
-        #     print str(e)
-        # else:
-        #     t.commit()
+        if sqlitedb.checkItemID(itemID) and sqlitedb.checkUserID(userID):
+            update_message = 'sucess'
+            return render_template('add_bid.html', message=update_message)
+        ''' t = sqlitedb.transaction()
         try:
+            sqlitedb.query('[FIRST QUERY STATEMENT]')
+            sqlitedb.query('[SECOND QUERY STATEMENT]')
+        except Exception as e:
+            t.rollback()
+            print str(e)
+        else:
+           t.commit() '''
+        ''' try:
             current_time = sqlitedb.getTime()
+            int(itemID)
+            #if isinstance(itemID, int):
             update_message = 'Bid set on item:%s at $%s' \
-                         ' at %s' % ((itemID), (price), (current_time))
+                        ' at %s' % ((itemID), (price), (current_time))
             sqlitedb.insertBid(itemID, userID, price, current_time)
+            #else:
+            #    raise Exception('Error: ItemID was not an int')
         except Exception as e:
             print str(e)
-            update_message = 'Invalid bid, please enter a new valid bid'
+            update_message = str(e) '''
 
         # Here, we assign `update_message' to `message', which means
         # we'll refer to it in our template as `message'
-        return render_template('add_bid.html', message=update_message)
+        return render_template('add_bid.html', message="false")
 
 
 
