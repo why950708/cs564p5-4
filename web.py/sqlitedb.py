@@ -92,3 +92,32 @@ def checkUserID(user_id):
     query_string = 'SELECT * FROM users where userid = $user_id'
     results = queryWithResult(query_string, {'user_id': user_id})
     return len(results) == 1
+def getBuyPrice(item_id):
+    query_string = 'SELECT Buy_Price from items where itemid = $item_id'
+    results = queryWithResult(query_string, {'item_id': item_id})
+    return results.Buy_Price
+
+def getCurrently(item_id):
+    query_string = 'SELECT Currently from items where itemid = $item_id'
+    results = queryWithResult(query_string, {'item_id': item_id})
+    return results.Currently
+
+#true if auction has ended
+def hasAuctionEnded(item_id):
+    if getCurrently(item_id) >= getBuyPrice(item_id):
+        return True
+    
+    if getTime()
+
+def getAuctionEndTime(item_id):
+    query_string = 'SELECT Ends from items where itemid = $item_id'
+    results = queryWithResult(query_string, {'item_id': item_id})
+    return results.Ends
+
+## returns true if it is a valid bid, false otherwise
+def checkBidBuyPrice(bid, itemid):
+    if buy_price is None:
+        return True
+    if bid > getBuyPrice(item_id) and getCurrently(item_id) >= getBuyPrice(item_id):
+        return False
+    return True

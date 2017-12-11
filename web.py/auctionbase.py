@@ -73,18 +73,32 @@ class add_bid:
         itemID = post_params['itemID']
         price = post_params['price']
         userID = post_params['userID']
-        if sqlitedb.checkItemID(itemID) and sqlitedb.checkUserID(userID):
-            update_message = 'sucess'
+        if not sqlitedb.checkItemID(itemID):
+            update_message = 'ItemID is not found'
+            return render_template('add_bid.html', message=update_message) 
+        if not sqlitedb.checkUserID(userID):
+            update_message = "UserID is not found"
             return render_template('add_bid.html', message=update_message)
-        ''' t = sqlitedb.transaction()
+        if not sqlitedb.checkBidBuyPrice(price, itemID)
+            update_message = 'Buy Price has already been exceeded'
+            return render_template('add_bid.html', message=update_message)
+        t = sqlitedb.transaction()
         try:
-            sqlitedb.query('[FIRST QUERY STATEMENT]')
-            sqlitedb.query('[SECOND QUERY STATEMENT]')
+            current_time = sqlitedb.getTime()
+            int(itemID)
+            #if isinstance(itemID, int):
+            update_message = 'Bid set on item:%s at $%s' \
+                        ' at %s' % ((itemID), (price), (current_time))
+            sqlitedb.insertBid(itemID, userID, price, current_time)
         except Exception as e:
             t.rollback()
             print str(e)
+            #update_message = str(e)
+            update_message = "Please check your input"
+            result = False
         else:
-           t.commit() '''
+            result = True
+            t.commit()
         ''' try:
             current_time = sqlitedb.getTime()
             int(itemID)
@@ -100,7 +114,7 @@ class add_bid:
 
         # Here, we assign `update_message' to `message', which means
         # we'll refer to it in our template as `message'
-        return render_template('add_bid.html', message="false")
+        return render_template('add_bid.html', message=update_message, add_result=result)
 
 
 
