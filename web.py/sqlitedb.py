@@ -92,31 +92,45 @@ def checkUserID(user_id):
     query_string = 'SELECT * FROM users where userid = $user_id'
     results = queryWithResult(query_string, {'user_id': user_id})
     return len(results) == 1
+
 def getBuyPrice(item_id):
     query_string = 'SELECT Buy_Price from items where itemid = $item_id'
     results = queryWithResult(query_string, {'item_id': item_id})
-    return results.Buy_Price
+    return results[0].Buy_Price
 
 def getCurrently(item_id):
     query_string = 'SELECT Currently from items where itemid = $item_id'
     results = queryWithResult(query_string, {'item_id': item_id})
-    return results.Currently
+    return results[0].Currently
 
 #true if auction has ended
 def hasAuctionEnded(item_id):
-    if getCurrently(item_id) >= getBuyPrice(item_id):
+    if getCurrently(item_id) >= getBuyPrice(item_id) or hasAuctionEndedSQLOnly(item_id):
         return True
-    
-    if getTime()
+    return False
+
+def hasAuctionEndedSQLOnly(item_id):
+    query_string = 'SELECT COUNT(*) FROM CurrentTime, items WHERE itemid=$item_id AND time < items.ends;'
+    results = queryWithResult(query_string, {'item_id': item_id})
+    if results == 1:
+        return False
+    return True
+
+def hasAuctionStartedSQLOnly(item_id):
+    query_string = 'SELECT COUNT(*) FROM CurrentTime, items WHERE itemid=$item_id AND time > items.started;'
+    results = queryWithResult(query_string, {'item_id': item_id})
+    if results == 1:
+        return False
+    return True
 
 def getAuctionEndTime(item_id):
     query_string = 'SELECT Ends from items where itemid = $item_id'
     results = queryWithResult(query_string, {'item_id': item_id})
-    return results.Ends
+    return results[0].Ends
 
 ## returns true if it is a valid bid, false otherwise
-def checkBidBuyPrice(bid, itemid):
-    if buy_price is None:
+def checkBidBuyPrice(bid, item_id):
+    if getBuyPrice(item_id) is None:
         return True
     if bid > getBuyPrice(item_id) and getCurrently(item_id) >= getBuyPrice(item_id):
         return False

@@ -89,13 +89,9 @@ class search:
                 else:
                     query += " and " + queries[x]
 
-        result = sqlitedb.queryWithResult(query, {  'itemID': params[0],
-                                                    'minPrice': params[1],
-                                                    'maxPrice': params[2],
-                                                    'userID': params[3]
-                                                    })
+        result = sqlitedb.queryWithResult(query, {'itemID': params[0], 'minPrice': params[1],'maxPrice': params[2],'userID': params[3]})
 
-        for result 
+        #for result 
         return render_template('search.html', search_result=result)
         
 
@@ -118,10 +114,12 @@ class add_bid:
         if not sqlitedb.checkUserID(userID):
             update_message = "UserID is not found"
             return render_template('add_bid.html', message=update_message)
-        if not sqlitedb.checkBidBuyPrice(price, itemID)
+        ''' if not sqlitedb.checkBidBuyPrice(price, itemID):
             update_message = 'Buy Price has already been exceeded'
-            return render_template('add_bid.html', message=update_message)
+            return render_template('add_bid.html', message=update_message) '''
         t = sqlitedb.transaction()
+        if sqlitedb.hasAuctionEnded(itemID):
+            update_message = 'Auction has ended'
         try:
             current_time = sqlitedb.getTime()
             int(itemID)
