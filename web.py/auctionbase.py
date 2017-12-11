@@ -60,6 +60,45 @@ urls = ('/currtime', 'curr_time',
 class search:
     def GET(self):
         return render_template('search.html')
+    def POST(self):
+        post_params = web.input()
+        print post_params
+        
+        params = [  post_params['itemID'],
+                    post_params['minPrice'],
+                    post_params['maxPrice'],
+                    post_params['userID'],
+                    post_params['status']
+                ] 
+        
+        queries= [  "ItemID = $itemID",
+                    "currently >= $minPrice",
+                    "currently <= $maxPrice",
+                    "Seller_UserID = $userID",
+                ]
+        
+        #TODO add in function call for status check
+        
+        query = "Select ItemID, Ends, Name, Currently, Buy_Price From Items where "
+        first = True
+        for x in range(0,4):
+            if len(params[x]) is not 0:
+                if first is True:
+                    query += queries[x]
+                    first = False
+                else:
+                    query += " and " + queries[x]
+
+        result = sqlitedb.queryWithResult(query, {  'itemID': params[0],
+                                                    'minPrice': params[1],
+                                                    'maxPrice': params[2],
+                                                    'userID': params[3]
+                                                    })
+
+        for result 
+        return render_template('search.html', search_result=result)
+        
+
 class add_bid:
     # A simple GET request, to '/currtime'
     #
