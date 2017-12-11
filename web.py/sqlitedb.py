@@ -112,6 +112,7 @@ def hasAuctionEnded(item_id):
         return True
     return False
 
+#returns false if auction has not ended, true if auction has ended
 def hasAuctionEndedSQLOnly(item_id):
     query_string = 'SELECT COUNT(*) FROM CurrentTime, items WHERE itemid=$item_id AND time < items.ends;'
     results = queryWithResult(query_string, {'item_id': item_id})
@@ -119,6 +120,7 @@ def hasAuctionEndedSQLOnly(item_id):
         return False
     return True
 
+#returns true if auction has started, false if auction has not started
 def hasAuctionStartedSQLOnly(item_id):
     query_string = 'SELECT COUNT(*) FROM CurrentTime, items WHERE itemid=$item_id AND time > items.started;'
     results = queryWithResult(query_string, {'item_id': item_id})
@@ -126,6 +128,7 @@ def hasAuctionStartedSQLOnly(item_id):
         return True
     return False
 
+# i don't think this is used
 def getAuctionEndTime(item_id):
     query_string = 'SELECT Ends from items where itemid = $item_id'
     results = queryWithResult(query_string, {'item_id': item_id})
@@ -139,11 +142,13 @@ def checkBidBuyPrice(bid, item_id):
         return False
     return True
 
+# returns all item properties given an item id
 def getItemReWrite(item_id):
     query_string = 'SELECT * from items where itemid = $item_id'
     result = queryWithResult(query_string, {'item_id':item_id})
     return result[0]
 
+#returns all item categories given item id
 def getItemCategories(item_id):
     query_string = 'SELECT * from Categories where itemid = $item_id'
     result = queryWithResult(query_string, {'item_id':item_id})
