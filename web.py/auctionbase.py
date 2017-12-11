@@ -54,6 +54,7 @@ urls = ('/currtime', 'curr_time',
         '/selecttime', 'select_time',
         '/add_bid', 'add_bid',
         '/search', 'search',
+        '/single_item_view', 'single_item_view'
         # TODO: add additional URLs here
         # first parameter => URL, second parameter => class name
         )
@@ -194,6 +195,41 @@ class select_time:
         # Here, we assign `update_message' to `message', which means
         # we'll refer to it in our template as `message'
         return render_template('select_time.html', message=update_message)
+
+class single_item_view:
+    def GET(self):
+        return render_template('single_item_view.html')
+    def POST(self):
+        #grab parameters from post
+        post_params = web.input()
+        item_id = post_params['itemID']
+
+        #check if itemID is valid, if not, let user know
+        if not sqlitedb.checkItemID(item_id):
+            message = "Item was not found"
+            return render_template('single_item_view.html', message=message)
+        #get stuff from items table (category, item, description, etc)
+        result = sqlitedb.getItemReWrite(item_id)
+        
+        #get categories of item
+        categories = sqlitedb.getItemCategories(item_id)
+        
+        #figure out if the auction is closed or open
+        auctionMessage = "Open"
+        winning_bidder = None
+        if not sqlitedb.hasAuctionStartedSQLOnly(item_id):
+            auctionMessage = "Closed"
+        if sqlitedb.hasAuctionEnded(item_id):
+            auctionMessage = "Closed" 
+            if sqlitedb.getWinningBidder(item_id) is not None:
+               winning_bidder =  sqlitedb.getWinningBidder(item_id)
+
+
+        bids = sqlitedb.getBids(item_id)
+        print bids[0]['UserID']
+        if winning_bidder is not None:
+            return render_template('single_item_view.html', results=result, categories=categories.Category, auctionMessage=auctionMessage, allBids = bids, winningBidder=winning_bidder)
+        return render_template('single_item_view.html', results=result, categories=categories.Category, auctionMessage=auctionMessage, allBids = bids,)
 
 ###########################################################################################
 ##########################DO NOT CHANGE ANYTHING BELOW THIS LINE!##########################

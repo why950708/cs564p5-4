@@ -49,6 +49,7 @@ def getItemById(item_id):
     # TODO: rewrite this method to catch the Exception in case `result' is empty
     query_string = 'select * from Items where ItemID = $itemID'
     result = query(query_string, {'itemID': item_id})
+    print "///////// ",result
     return result[0]
 
 # wrapper method around web.py's db.query method
@@ -105,23 +106,25 @@ def getCurrently(item_id):
 
 #true if auction has ended
 def hasAuctionEnded(item_id):
-    if getCurrently(item_id) >= getBuyPrice(item_id) or hasAuctionEndedSQLOnly(item_id):
+    if hasAuctionEndedSQLOnly(item_id):
+        return True
+    if getCurrently(item_id) >= getBuyPrice(item_id) and getBuyPrice(item_id) is not None:
         return True
     return False
 
 def hasAuctionEndedSQLOnly(item_id):
     query_string = 'SELECT COUNT(*) FROM CurrentTime, items WHERE itemid=$item_id AND time < items.ends;'
     results = queryWithResult(query_string, {'item_id': item_id})
-    if results == 1:
+    if results is not None:
         return False
     return True
 
 def hasAuctionStartedSQLOnly(item_id):
     query_string = 'SELECT COUNT(*) FROM CurrentTime, items WHERE itemid=$item_id AND time > items.started;'
     results = queryWithResult(query_string, {'item_id': item_id})
-    if results == 1:
-        return False
-    return True
+    if results is not None:
+        return True
+    return False
 
 def getAuctionEndTime(item_id):
     query_string = 'SELECT Ends from items where itemid = $item_id'
@@ -135,3 +138,33 @@ def checkBidBuyPrice(bid, item_id):
     if bid > getBuyPrice(item_id) and getCurrently(item_id) >= getBuyPrice(item_id):
         return False
     return True
+
+def getItemReWrite(item_id):
+    query_string = 'SELECT * from items where itemid = $item_id'
+    result = queryWithResult(query_string, {'item_id':item_id})
+    return result[0]
+
+def getItemCategories(item_id):
+    query_string = 'SELECT * from Categories where itemid = $item_id'
+    result = queryWithResult(query_string, {'item_id':item_id})
+    return result[0]
+
+def getBids(item_id):
+    query_string = 'select userid, amount, time from bids where itemid = $item_id'
+    result = queryWithResult(query_string, {'item_id':item_id})
+    return result
+
+#returns username of winning bidder if auction has ended or "No Winning Bidder" if there are no bids
+def getWinningBidder(item_id):
+    #check if auction has ended
+    if hasAuctionEnded(item_id):
+        query_string = 'select userid from bids where itemid = $item_id ORDER BY amount DESC limit 1'
+        result = queryWithResult(query_string, {'item_id':item_id})
+        if result is None:
+            return "No Winning Bidder"
+        else:
+            returnVar = "Winning Bidder is"
+            returnVar += result[0].UserID
+            return returnVar
+    else:
+        return None

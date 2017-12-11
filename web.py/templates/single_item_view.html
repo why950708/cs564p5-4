@@ -1,0 +1,71 @@
+{% extends "app_base.html" %}
+{% block content %}
+<h3>View A Single Auction w/ Item ID</h3>
+{% if message is defined %}
+<div class="alert alert-danger" role="alert">{{message}}</div>
+{% endif %}
+<form method="POST" action="single_item_view" style="max-width:400px; width:100%">
+    <div class="form-group">
+        <label for="itemID">Item ID</label>
+        <input type="text" name="itemID" class="form-control" id="itemID" />
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Get Item" class="btn btn-primary" />
+    </div>
+</form>
+{% if results %}
+<div class="row">
+    <div class="alert alert-info" role="alert">Auction is {{ auctionMessage }}</div>
+    {% if winningBidder is defined %}
+    <div class="alert alert-info" role="alert">{{ winningBidder }}</div>  
+    {% endif %}
+    <div class="col-md-6">
+        {% for result in results %}
+        <a class="list-group-item">
+            <div class="list-group">
+                <h4 class="list-group-item-heading">{{ result|e }}</h4>
+                <p class="list-group-item-text">{{ results[result]|e }}</p>
+            </div>  
+        </a>
+        {% endfor %}
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Categories</h3>
+            </div>
+            <div class="panel-body">
+              {{ categories | e }}
+            </div>
+          </div>
+    </div>
+    
+    {% if allBids is defined %}
+
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Bids</h4></div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Bid</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bid in allBids %}
+                    <tr>
+                        <th>{{ bid['UserID'] | e}}</th>
+                        <th>{{ bid['Amount'] | e}}</th>
+                        <th>{{ bid['Time'] | e }}</th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
