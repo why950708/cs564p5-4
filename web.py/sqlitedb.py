@@ -48,9 +48,11 @@ def getTime():
 def getItemById(item_id):
     # TODO: rewrite this method to catch the Exception in case `result' is empty
     query_string = 'select * from Items where ItemID = $itemID'
-    result = query(query_string, {'itemID': item_id})
-    print "///////// ",result
-    return result[0]
+    result = queryWithResult(query_string, {'itemID': item_id})
+    if len(result) == 0:
+        return None
+    else:
+        return result[0]
 
 # wrapper method around web.py's db.query method
 # check out http://webpy.org/cookbook/query for more info
@@ -157,6 +159,8 @@ def getItemCategories(item_id):
 def getBids(item_id):
     query_string = 'select userid, amount, time from bids where itemid = $item_id'
     result = queryWithResult(query_string, {'item_id':item_id})
+    if (len(result)==0):
+        return None
     return result
 
 #returns username of winning bidder if auction has ended or "No Winning Bidder" if there are no bids

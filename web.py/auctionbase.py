@@ -54,10 +54,60 @@ urls = ('/currtime', 'curr_time',
         '/selecttime', 'select_time',
         '/add_bid', 'add_bid',
         '/search', 'search',
-        '/single_item_view', 'single_item_view'
+        '/single_item_view', 'single_item_view',
+        '/single_item','single_item',
         # TODO: add additional URLs here
         # first parameter => URL, second parameter => class name
         )
+
+class single_item:
+    def GET(self):
+        param = web.input()
+        if (len(param)==0):
+            return render_template('single_item_view.html')
+        id = param.Id
+        item = sqlitedb.getItemById(id)
+        if (not item):
+            update_message="No Such Item"
+            return render_template('single_item_view.html', message=update_message)
+
+        # get stuff from items table (category, item, description, etc)
+        result = sqlitedb.getItemReWrite(id)
+
+        # get categories of item
+        categories = sqlitedb.getItemCategories(id)
+
+        # figure out if the auction is closed or open
+        auctionMessage = "Open"
+        winning_bidder = None
+        if not sqlitedb.hasAuctionStartedSQLOnly(id):
+            auctionMessage = "Closed"
+        if sqlitedb.hasAuctionEnded(id):
+            auctionMessage = "Closed"
+            if sqlitedb.getWinningBidder(id) is not None:
+                winning_bidder = sqlitedb.getWinningBidder(id)
+
+        bids = sqlitedb.getBids(id)
+        if (not bids):
+            allBids=[]
+            if winning_bidder is not None:
+                return render_template('single_item_view.html', results=result, categories=categories.Category,
+                                       auctionMessage=auctionMessage,  winningBidder=winning_bidder)
+            return render_template('single_item_view.html', results=result, categories=categories.Category,
+                                   auctionMessage=auctionMessage,)
+        else:
+            allBids = bids
+            print bids[0]['UserID']
+            if winning_bidder is not None:
+                return render_template('single_item_view.html', results=result, categories=categories.Category,
+                                       auctionMessage=auctionMessage, allBids=bids, winningBidder=winning_bidder)
+            return render_template('single_item_view.html', results=result, categories=categories.Category,
+                                   auctionMessage=auctionMessage, allBids=bids, )
+
+
+
+
+
 class search:
     def GET(self):
         return render_template('search.html')

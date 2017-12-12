@@ -38,9 +38,15 @@
 {% for result in search_result %}
 	{% for key in result %}
 		<div>
+			{% if key=="ItemID" %}
+			<span> {{key|e}}</span>
+			<a href="single_item?Id={{result[key]}}">{{result[key]}}</a>
+			{%else%}
 			<span>{{ key|e }}</span>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<span>{{ result[key]|e }}</span>
+			{% endif %}
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 		</div>
   	{% endfor %}
   	<div>--------</div>
