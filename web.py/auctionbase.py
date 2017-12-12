@@ -72,21 +72,32 @@ class search:
                     post_params['status']
                 ] 
         
+        query = "Select ItemID, Name, Currently, Buy_Price, Started, Ends From Items"
+        
+        
         queries= [  "ItemID = $itemID",
                     "currently >= $minPrice",
                     "currently <= $maxPrice",
                     "Seller_UserID = $userID",
                 ]
+        if params[4] == 'open':
+            queries.append("Ends > time")
+            query += ", CurrentTime"
+        elif params[4] == 'close':
+            queries.append("Ends < time")
+            query += ", CurrentTime"
+        elif params[4] == 'notStarted':
+            queries.append("Started > time")
+            query += ", CurrentTime"
         
         #TODO add in function call for status check
         
-        query = "Select ItemID, Ends, Name, Currently, Buy_Price From Items where "
         first = True
-        for x in range(0,4):
+        for x in range(0,len(queries)):
             if len(params[x]) is not 0:
                 if first is True:
-                    query += queries[x]
-                    first = False
+                        query += " where " + queries[x]
+                        first = False
                 else:
                     query += " and " + queries[x]
 
