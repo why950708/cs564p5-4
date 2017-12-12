@@ -4,13 +4,13 @@
 {% if message is defined %}
 <div class="alert alert-danger" role="alert">{{message}}</div>
 {% endif %}
-<form method="POST" action="single_item_view" style="max-width:400px; width:100%">
+<form method="GET" action="/single_item" style="max-width:400px; width:100%">
     <div class="form-group">
         <label for="itemID">Item ID</label>
-        <input type="text" name="itemID" class="form-control" id="itemID" />
+        <input type="text" name="Id" class="form-control" id="itemID" required/>
     </div>
     <div class="form-group">
-        <input type="submit" value="Get Item" class="btn btn-primary" />
+            <input type="submit" value="Get Item" class="btn btn-primary" />
     </div>
 </form>
 {% if results %}
