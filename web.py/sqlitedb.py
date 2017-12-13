@@ -116,17 +116,17 @@ def hasAuctionEnded(item_id):
 
 #returns false if auction has not ended, true if auction has ended
 def hasAuctionEndedSQLOnly(item_id):
-    query_string = 'SELECT COUNT(*) FROM CurrentTime, items WHERE itemid=$item_id AND time < items.ends;'
+    query_string = 'SELECT * FROM CurrentTime, items WHERE itemid=$item_id AND time < items.ends'
     results = queryWithResult(query_string, {'item_id': item_id})
-    if results is not None:
-        return False
-    return True
+    if not results:
+        return True
+    return False
 
 #returns true if auction has started, false if auction has not started
 def hasAuctionStartedSQLOnly(item_id):
-    query_string = 'SELECT COUNT(*) FROM CurrentTime, items WHERE itemid=$item_id AND time > items.started;'
+    query_string = 'SELECT * FROM CurrentTime, items WHERE itemid=$item_id AND time > items.started;'
     results = queryWithResult(query_string, {'item_id': item_id})
-    if results is not None:
+    if not results:
         return True
     return False
 
@@ -168,8 +168,8 @@ def getWinningBidder(item_id):
     #check if auction has ended
     if hasAuctionEnded(item_id):
         query_string = 'select userid from bids where itemid = $item_id ORDER BY amount DESC limit 1'
-        result = queryWithResult(query_string, {'item_id':item_id})
-        if result is None:
+        results = queryWithResult(query_string, {'item_id':item_id})
+        if not results:
             return "No Winning Bidder"
         else:
             returnVar = "Winning Bidder is"

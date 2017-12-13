@@ -298,7 +298,7 @@ class single_item_view:
         if not sqlitedb.hasAuctionStartedSQLOnly(item_id):
             auctionMessage = "Closed"
         if sqlitedb.hasAuctionEnded(item_id):
-            auctionMessage = "Closed" 
+            auctionMessage = "Closed"
             if sqlitedb.getWinningBidder(item_id) is not None:
                winning_bidder =  sqlitedb.getWinningBidder(item_id)
 
