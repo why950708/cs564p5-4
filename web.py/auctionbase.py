@@ -119,26 +119,37 @@ class search:
                     post_params['minPrice'],
                     post_params['maxPrice'],
                     post_params['userID'],
+                    post_params['category'],
+                    post_params['description'],
                     post_params['status']
                 ] 
+
+        if len(post_params['description']) != 0:
+            params[5] = '%' + params[5] + '%'
         
-        query = "Select ItemID, Name, Currently, Buy_Price, Started, Ends From Items"
+        query = "Select I.ItemID, Name, Currently, Buy_Price, Started, Ends From Items as I"
         
         
-        queries= [  "ItemID = $itemID",
+        queries= [  "I.ItemID = $itemID",
                     "currently >= $minPrice",
                     "currently <= $maxPrice",
                     "Seller_UserID = $userID",
+                    "C.ItemID == I.ItemID and category == $category",
+                    "description LIKE $description"
                 ]
-        if params[4] == 'open':
+        if params[6] == 'open':
             queries.append("Ends > time")
             query += ", CurrentTime"
-        elif params[4] == 'close':
+        elif params[6] == 'close':
             queries.append("Ends < time")
             query += ", CurrentTime"
-        elif params[4] == 'notStarted':
+        elif params[6] == 'notStarted':
             queries.append("Started > time")
             query += ", CurrentTime"
+        
+        if len(params[4]) != 0:
+            query += ", Categories as C"
+        
         
         #TODO add in function call for status check
         
@@ -151,7 +162,13 @@ class search:
                 else:
                     query += " and " + queries[x]
 
-        result = sqlitedb.queryWithResult(query, {'itemID': params[0], 'minPrice': params[1],'maxPrice': params[2],'userID': params[3]})
+        result = sqlitedb.queryWithResult(query, {  'itemID': params[0], 
+                                                    'minPrice': params[1],
+                                                    'maxPrice': params[2],
+                                                    'userID': params[3],
+                                                    'category': params[4],
+                                                    'description': params[5]
+                                                    })
 
         #for result 
         return render_template('search.html', search_result=result)
