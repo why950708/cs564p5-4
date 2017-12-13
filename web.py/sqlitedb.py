@@ -127,8 +127,9 @@ def hasAuctionStartedSQLOnly(item_id):
     query_string = 'SELECT * FROM CurrentTime, items WHERE itemid=$item_id AND time > items.started;'
     results = queryWithResult(query_string, {'item_id': item_id})
     if not results:
-        return True
-    return False
+        print "returning true"
+        return False
+    return True
 
 # i don't think this is used
 def getAuctionEndTime(item_id):
