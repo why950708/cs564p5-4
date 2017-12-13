@@ -174,7 +174,7 @@ def getWinningBidder(item_id):
             return "No Winning Bidder"
         else:
             returnVar = "Winning Bidder is"
-            returnVar += result[0].UserID
+            returnVar += results[0].UserID
             return returnVar
     else:
         return None
